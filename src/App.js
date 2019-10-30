@@ -21,7 +21,7 @@ class App extends Component {
 
     this.state = {
       columnDefs: [{
-        headerName: "", field: "", checkboxSelection: true
+        headerName: "", field: "", checkboxSelection: true, width: 40, suppressSizeToFit: true
       }, {
         headerName: "First Name", field: "firstName", sortable: true
       }, {
@@ -31,17 +31,7 @@ class App extends Component {
       }, {
         headerName: "Phone Number", field: "phoneNumber", sortable: true
       }],
-      rowData: [{
-        id: 0, firstName: "FirstName001", lastName: "LastName001", email: "001@email.com", phoneNumber: "000-000-0001"
-      }, {
-        id: 1, firstName: "FirstName002", lastName: "LastName002", email: "002@email.com", phoneNumber: "000-000-0002"
-      }, {
-        id: 2, firstName: "FirstName003", lastName: "LastName003", email: "003@email.com", phoneNumber: "000-000-0003"
-      }, {
-        id: 3, firstName: "FirstName004", lastName: "LastName004", email: "004@email.com", phoneNumber: "000-000-0004"
-      }, {
-        id: 4, firstName: "FirstName005", lastName: "LastName005", email: "005@email.com", phoneNumber: "000-000-0005"
-      }],
+      rowData                    : [],
       selectedCustomerID         : -1,
       selectedCustomerFirstName  : "",
       selectedCustomerLastName   : "",
@@ -55,9 +45,18 @@ class App extends Component {
 
   componentDidMount() {
     //populate table with data from DB
-    // fetch('')
-    // .then(result => result.json())
-    // .then(rowData => this.setState({rowData}))
+    let _this = this;
+    fetch('https://webhooks.mongodb-stitch.com/api/client/v2.0/app/reactcustomertable-bcyna/service/http/incoming_webhook/GET')
+    .then((resp) => resp.json())
+    .then (function(rowData){
+      _this.setState({rowData: rowData});
+      _this.gridApi.sizeColumnsToFit();
+    });
+    
+    //event listeners
+    window.addEventListener("resize", function(){
+      _this.gridApi.sizeColumnsToFit();
+    }, true);
   }
   
   addToTable(firstName, lastName, email, phoneNumber){
@@ -121,8 +120,19 @@ class App extends Component {
     let closeDeleteModal = () => this.setState({isShowDeleteModal: false});
 
     return (
-      <div className = "ag-theme-balham" style = {{ height: '750px',width : '100%' }}>
-        <Button onClick={this.addCustomer}>Add Customer</Button>
+      <div style={{display: "block"}}>
+        <div className = "buttonContainer">
+          <Button onClick={this.addCustomer}>Add Customer</Button>
+          <Button onClick={this.editCustomer}>Edit Customer</Button>
+          <Button onClick={this.deleteCustomer}>Delete Customer</Button>
+        </div>
+        <div className = "ag-theme-balham tableContainer">
+        <AgGridReact 
+        columnDefs  = {this.state.columnDefs}
+        rowData     = {this.state.rowData}
+        onGridReady = { params => this.gridApi = params.api }>
+        </AgGridReact>
+        </div>
         <AddModal 
         show                        = {this.state.isShowAddModal}
         onHide                      = {closeAddModal}
@@ -133,8 +143,6 @@ class App extends Component {
         selectedcustomerphonenumber = {this.state.selectedCustomerPhoneNumber}
         updatetable                 = {this.addToTable}>
         </AddModal>
-
-        <Button onClick={this.editCustomer}>Edit Customer</Button>
         <EditModal 
         show                        = {this.state.isShowEditModal}
         onHide                      = {closeEditModal}
@@ -145,8 +153,6 @@ class App extends Component {
         selectedcustomerphonenumber = {this.state.selectedCustomerPhoneNumber}
         updatetable                 = {this.editTable}>
         </EditModal>
-        
-        <Button onClick={this.deleteCustomer}>Delete Customer</Button>
         <DeleteModal 
         show                        = {this.state.isShowDeleteModal}
         onHide                      = {closeDeleteModal}
@@ -157,12 +163,6 @@ class App extends Component {
         selectedcustomerphonenumber = {this.state.selectedCustomerPhoneNumber}
         updatetable                 = {this.deleteFromTable}>
         </DeleteModal>
-
-        <AgGridReact 
-        columnDefs  = {this.state.columnDefs}
-        rowData     = {this.state.rowData}
-        onGridReady = { params => this.gridApi = params.api }>
-        </AgGridReact>
       </div>
     );
   }

@@ -1,0 +1,59 @@
+.App {
+  text-align: center;
+}
+.App-logo {
+  height: 40vmin;
+}
+.App-header {
+  background-color: #282c34;
+  min-height      : 100vh;
+  display         : flex;
+  flex-direction  : column;
+  align-items     : center;
+  justify-content : center;
+  font-size       : calc(10px + 2vmin);
+  color           : white;
+}
+.App-link {
+  color: #09d3ac;
+}
+
+body{
+  font-family: 'Roboto', sans-serif!important;
+}
+body, .ag-body-viewport, .buttonContainer, .modal-content{
+  background: #b1cbbb!important;
+}
+
+.buttonContainer{ 
+  display: block;
+  padding: 10px;
+  height : 68px;
+}
+.buttonContainer>Button{
+  margin: 5px;
+}
+
+.tableContainer {
+  height : calc(100vh - 68px);
+  width  : 80vw;
+  width  : 100%;
+  display: block;
+}
+.ag-header-cell:first-of-type{
+  width: 30px;
+}
+.ag-cell-focus{
+  border: 1px solid transparent!important;
+}
+
+.modal-header {
+  border-bottom: none!important;
+}
+.modal-footer{
+  border-top: none!important;
+}
+input{
+  padding      : 25px!important;
+  margin-bottom: 15px!important;
+}
